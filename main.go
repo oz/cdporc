@@ -14,7 +14,7 @@ const (
 	defaultConfirmValue = "ID"
 )
 
-func InitalizeApi() *api.PaginatedQuotes {
+func InitalizeApi() *api.Quotes {
 	serverURLEnv := os.Getenv("CDP_SERVER")
 	if serverURLEnv == "" {
 		fmt.Println("You must set the CDP_SERVER environment variable to the server URL first!")
@@ -29,7 +29,7 @@ func InitalizeApi() *api.PaginatedQuotes {
     return api.NewCoteDePorc(serverURL)
 }
 
-func DeleteQuote(api *api.PaginatedQuotes, id string) {
+func DeleteQuote(api *api.Quotes, id string) {
 	fmt.Printf("Deleting quote %s... ", id)
 
 	err := api.Delete(id)
@@ -40,7 +40,7 @@ func DeleteQuote(api *api.PaginatedQuotes, id string) {
 	fmt.Println("done.")
 }
 
-func ConfirmQuote(api *api.PaginatedQuotes, id string) {
+func ConfirmQuote(api *api.Quotes, id string) {
 	fmt.Printf("Publishing quote %s... ", id)
 
 	err := api.Confirm(id)
@@ -51,7 +51,7 @@ func ConfirmQuote(api *api.PaginatedQuotes, id string) {
 	fmt.Println("done.")
 }
 
-func RandomQuote(api *api.PaginatedQuotes) {
+func RandomQuote(api *api.Quotes) {
 	quote, err := api.Random()
 	if err != nil {
 		fmt.Println("Failed!", err.Error())
@@ -60,7 +60,7 @@ func RandomQuote(api *api.PaginatedQuotes) {
 	DisplayQuote(&quote)
 }
 
-func ListQuotes(api *api.PaginatedQuotes, kind string) {
+func ListQuotes(api *api.Quotes, kind string) {
 	path := "/quotes"
 	if kind != defaultListValue {
 		path = path + "/" + kind

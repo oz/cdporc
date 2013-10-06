@@ -18,7 +18,7 @@ type Quote struct {
 	State     string `json:"state"`
 }
 
-type PaginatedQuotes struct {
+type Quotes struct {
 	Page              int     `json:"page"`
 	PageCount         int     `json:"page_count"`
 	TotalEntriesCount int     `json:"total_entries_count"`
@@ -26,12 +26,12 @@ type PaginatedQuotes struct {
 	Server            *url.URL
 }
 
-func NewCoteDePorc(server *url.URL) (*PaginatedQuotes) {
-    return &PaginatedQuotes{Server: server}
+func NewCoteDePorc(server *url.URL) (*Quotes) {
+    return &Quotes{Server: server}
 }
 
 // Get all quotes at this path
-func (q *PaginatedQuotes) GetAll(path string) error {
+func (q *Quotes) GetAll(path string) error {
     currentPage := 1
     stopAt := currentPage
 
@@ -52,7 +52,7 @@ func (q *PaginatedQuotes) GetAll(path string) error {
 }
 
 // Delete a quote
-func (q PaginatedQuotes) Delete(id string) error {
+func (q *Quotes) Delete(id string) error {
 	resp, err := q.setupRequest("DELETE", "/quotes/"+id)
 	if err != nil {
 		return err
@@ -63,7 +63,7 @@ func (q PaginatedQuotes) Delete(id string) error {
 }
 
 // Confirm a quote
-func (q PaginatedQuotes) Confirm(id string) error {
+func (q *Quotes) Confirm(id string) error {
 	resp, err := q.setupRequest("PUT", "/quotes/"+id+"/confirm")
 	if err != nil {
 		return err
@@ -74,7 +74,7 @@ func (q PaginatedQuotes) Confirm(id string) error {
 }
 
 // Get a Random quote
-func (q PaginatedQuotes) Random() (Quote, error) {
+func (q *Quotes) Random() (Quote, error) {
 	quote := Quote{}
 	resp, err := q.setupRequest("GET", "/quotes/random")
 	if err != nil {
@@ -91,7 +91,7 @@ func (q PaginatedQuotes) Random() (Quote, error) {
 	return quote, nil
 }
 
-func (q *PaginatedQuotes) getPage(path string, page int) error {
+func (q *Quotes) getPage(path string, page int) error {
 	if page > 1 {
 		path = fmt.Sprintf("%s?page=%d", path, page)
 	}
@@ -101,13 +101,13 @@ func (q *PaginatedQuotes) getPage(path string, page int) error {
 	return nil
 }
 
-func (q *PaginatedQuotes) getJSON(path string) error {
+func (q *Quotes) getJSON(path string) error {
 	body, err := q.getPath(path)
 	if err != nil {
 		return err
 	}
 
-	quotes := PaginatedQuotes{}
+	quotes := Quotes{}
 	json.Unmarshal(body, &quotes)
 
 	// Append fetched quotes, and update internal state
@@ -119,7 +119,7 @@ func (q *PaginatedQuotes) getJSON(path string) error {
 }
 
 // Read "all" the data for the requested path on the server.
-func (q *PaginatedQuotes) getPath(path string) ([]byte, error) {
+func (q *Quotes) getPath(path string) ([]byte, error) {
 	resp, err := q.setupRequest("GET", path)
 	if err != nil {
 		return nil, err
@@ -136,7 +136,7 @@ func (q *PaginatedQuotes) getPath(path string) ([]byte, error) {
 
 // Setup a basic HTTP client with the given method and path, and return
 // a reference to the http.Response reply.
-func (q PaginatedQuotes) setupRequest(method string, relativePath string) (*http.Response, error) {
+func (q *Quotes) setupRequest(method string, relativePath string) (*http.Response, error) {
 	path := q.absoluteUrl(relativePath)
 	client := &http.Client{}
 
@@ -154,7 +154,7 @@ func (q PaginatedQuotes) setupRequest(method string, relativePath string) (*http
 }
 
 // Setup HTTP basic auth on a http.Request, if configured
-func (q PaginatedQuotes) setupAuth(req *http.Request) {
+func (q *Quotes) setupAuth(req *http.Request) {
 	password, passwordIsSet := q.Server.User.Password()
 
 	if passwordIsSet {
@@ -163,19 +163,19 @@ func (q PaginatedQuotes) setupAuth(req *http.Request) {
 	}
 }
 
-func (q *PaginatedQuotes) absoluteUrl(path string) string {
+func (q *Quotes) absoluteUrl(path string) string {
 	return q.Server.String() + path
 }
 
 // Sortable interface
-func (q PaginatedQuotes) Len() int {
+func (q *Quotes) Len() int {
 	return len(q.Entries)
 }
 
-func (q PaginatedQuotes) Swap(i, j int) {
+func (q *Quotes) Swap(i, j int) {
 	q.Entries[i], q.Entries[j] = q.Entries[j], q.Entries[i]
 }
 
-func (q PaginatedQuotes) Less(i, j int) bool {
+func (q *Quotes) Less(i, j int) bool {
 	return q.Entries[i].Id < q.Entries[j].Id
 }
