@@ -26,17 +26,17 @@ type Quotes struct {
 	Server            *url.URL
 }
 
-func NewCoteDePorc(server *url.URL) (*Quotes) {
-    return &Quotes{Server: server}
+func NewCoteDePorc(server *url.URL) *Quotes {
+	return &Quotes{Server: server}
 }
 
 // Get all quotes at this path
 func (q *Quotes) GetAll(path string) error {
-    currentPage := 1
-    stopAt := currentPage
+	currentPage := 1
+	stopAt := currentPage
 
-    // TODO: after fetching the first page, if the PageCount is huge, having a
-    //       pool of fetchers would be nice. :)
+	// TODO: after fetching the first page, if the PageCount is huge, having a
+	//       pool of fetchers would be nice. :)
 	for currentPage <= stopAt {
 		if err := q.getPage(path, currentPage); err != nil {
 			return err

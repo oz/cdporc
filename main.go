@@ -26,7 +26,7 @@ func InitalizeApi() *api.Quotes {
 		os.Exit(4)
 	}
 
-    return api.NewCoteDePorc(serverURL)
+	return api.NewCoteDePorc(serverURL)
 }
 
 func DeleteQuote(api *api.Quotes, id string) {
