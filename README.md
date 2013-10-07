@@ -28,7 +28,7 @@ You need Go 1.1.
 
     $ git clone http://github.com/oz/cdporc
     $ cd cdporc
-    $ go build -p cdporc
+    $ go build -o cdporc
 
 # Will this program change the world?
 
